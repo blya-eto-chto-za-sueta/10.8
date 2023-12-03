@@ -14,7 +14,9 @@ struct Node{
     int value;
     struct Node* next;
     struct Node* prev;
-}*head ;
+};
+
+struct Node* head = NULL;
 
 //элемент очереди
 struct queue {
@@ -127,8 +129,8 @@ void myMax(){
 
 
 int main(){
-    freopen("input.txt","r",stdin);
-    freopen("output.txt","w",stdout);
+
+    head = (struct Node*)malloc(sizeof(struct Node));
 
     TypeOperation typeOperation ;
     Type_Initialization(&typeOperation);
