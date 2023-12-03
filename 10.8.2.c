@@ -14,7 +14,7 @@ struct Node{
     int value;
     struct Node* next;
     struct Node* prev;
-}*max = NULL, *min = NULL;
+}*head ;
 
 //элемент очереди
 struct queue {
@@ -25,17 +25,17 @@ struct queue {
 }*rear = NULL, *front = NULL;
 
 void Type_Initialization( TypeOperation* type){
-    type->enqueue = (char*)malloc(7* sizeof(char));
-    type->enqueue = "enqueue";
+    type->enqueue = (char*)malloc(8* sizeof(char));
+    strcpy(type->enqueue, "enqueue");
 
-    type->dequeue = (char*)malloc(7* sizeof(char));
-    type->dequeue = "dequeue";
+    type->dequeue = (char*)malloc(8* sizeof(char));
+    strcpy(type->dequeue, "dequeue");
 
     type->min =(char*)malloc(4* sizeof(char));
-    type->min = "min\0";
+    strcpy(type->min, "min");
 
     type->max = (char*)malloc(4* sizeof(char));
-    type->max = "max";
+    strcpy(type->max, "max");
 }
 
 struct queue* newQNode (int meaning){
@@ -48,55 +48,46 @@ struct queue* newQNode (int meaning){
 struct Node* newSpNode (int data){
     struct Node* node = (struct Node*)malloc(sizeof (struct Node));
     node->value = data;
-    node->next = NULL;
-    node->prev = NULL;
-    max = node;
-    min = node;
+    node->next = head;
+    node->prev = head;
+    head->next = node;
+    head->prev = node;
     return node;
 }
 
 struct Node* addSpNode (int data){
     struct Node* node = (struct Node*)malloc(sizeof (struct Node));
-    int* tempData = (int*)malloc(sizeof (int));
     node->value = data;
 
-    if (node->value <= min->value ){
-        min->prev = node;
-        node->next = min;
-        node->prev = NULL;
-        min = node;
+    if (node->value <= head->next->value ){
+        head->next->prev = node;
+        node->next = head->next;
+        node->prev = head;
+        head->next = node;
     }
-    else if (node->value >= max->value){
-        max->next = node;
-        node->next = NULL;
-        node->prev = max;
-        max = node;
+    else if (node->value >= head->prev->value){
+        head->prev->next = node;
+        node->next = head;
+        node->prev = head->prev;
+        head->prev = node;
     }
     else{
-        struct Node* temp = (struct Node*)malloc(sizeof(struct Node));
-        temp = min;
+        struct Node* temp;
+        temp = head->next;
         while (temp->value < node->value){
             temp = temp->next;
         }
-        node->next = temp->next;
-        temp->next = node;
+        temp->prev->next = node;
+        node->next = temp;
+        node->prev = temp->prev;
+        temp->prev = node;
     }
     return node;
 }
 
 void deleteSpisok (struct Node** node){
-    if ((*node)->prev == NULL){
-        min = (*node)->next;
-    }
-    if((*node)->next == NULL){
-        max = (*node)->prev;
-    }
-    if ((*node)->prev != NULL) {
-        ((*node)->prev)->next = (*node)->next;
-    }
-    if ((*node)->next != NULL) {
-        ((*node)->next)->prev = (*node)->prev;
-    }
+    ((*node)->prev)->next = (*node)->next;
+    ((*node)->next)->prev = (*node)->prev;
     free(*node);
     *node = NULL;
 }
@@ -127,11 +118,11 @@ int dequeue (){
 }
 
 void myMin(){
-    printf("%d\n",min->value);
+    printf("%d\n",head->next->value);
 }
 
 void myMax(){
-    printf("%d\n",max->value);
+    printf("%d\n",head->prev->value);
 }
 
 
@@ -168,9 +159,6 @@ int main(){
             myMax();
 
         }
-
     }
     return 0;
-    fclose(stdin);
-    fclose(stdout);
 }
